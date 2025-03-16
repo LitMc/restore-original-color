@@ -8,3 +8,13 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Image directories
+images/
+
+# Photoshop files
+*.psd
+
+# Jupyter files
+*.ipynb
+.ipynb_notebooks/
