@@ -12,7 +12,9 @@ def resize_image_and_save(
     resample=Image.Resampling.BICUBIC,
 ) -> Image:
     im = Image.open(image_path).convert("RGB")
-    im_resized = im.resize((target_width, target_height), resample=resample)
+    im_resized = im.resize(
+        (target_width, target_height), resample=Image.Resampling["f{resample}"]
+    )
     im_resized.save(output_path / f"{image_path.stem}_{resample.name}.png")
     return im_resized
 
@@ -21,9 +23,11 @@ def resize_image(
     image: Image,
     target_width: int,
     target_height: int,
-    resample=Image.Resampling.BICUBIC,
+    resample: str = Image.Resampling.BICUBIC.name,
 ) -> Image:
-    return image.resize((target_width, target_height), resample=resample)
+    return image.resize(
+        (target_width, target_height), resample=Image.Resampling[resample]
+    )
 
 
 if __name__ == "__main__":
@@ -57,12 +61,12 @@ if __name__ == "__main__":
         # Resize all images in the directory
         for image_file in image_path.iterdir():
             image = Image.open(image_file).convert("RGB")
-            resize_image(image, args.width, args.height, Image.Resampling.BICUBIC).save(
-                output_path / f"{image_file.stem}_{Image.Resampling.BICUBIC.name}.png"
+            resize_image(image, args.width, args.height, args.resample).save(
+                output_path / f"{image_file.stem}_{args.resample}.png"
             )
     else:
         # Resize single image
         image = Image.open(image_path).convert("RGB")
-        resize_image(image, args.width, args.height, Image.Resampling.BICUBIC).save(
-            output_path / f"{image_path.stem}_{Image.Resampling.BICUBIC.name}.png"
+        resize_image(image, args.width, args.height, args.resample).save(
+            output_path / f"{image_path.stem}_{args.resample}.png"
         )
