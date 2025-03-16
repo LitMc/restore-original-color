@@ -10,12 +10,28 @@ def __resize_image(
     target_height: int,
     resample: str = Image.Resampling.BICUBIC.name,
 ) -> Image:
+    print(f"{image.size} -> {target_width}x{target_height}", end=" ")
     return image.resize(
         (target_width, target_height), resample=Image.Resampling[resample]
     )
 
 
+def __resize_and_save_image_file(
+    image_file: Path,
+    output_path: Path,
+    width: int,
+    height: int,
+    resample: str = Image.Resampling.BICUBIC.name,
+) -> Image:
+    print(f"{image_file.name},", end=" ")
+    image = Image.open(image_file).convert("RGB")
+    resized_image = __resize_image(image, width, height, resample)
+    resized_image.save(output_path / f"{image_file.stem}_{resample}.png")
+    print(f", {output_path / f'{image_file.stem}_{resample}.png'}")
+
+
 def resize_and_save_images(image_path, output_path, width, height, resample):
+    print(f"Resizing images using {resample} resampling filter")
     image_path = Path(image_path)
     output_path = Path(output_path)
     if not image_path.exists():
@@ -25,16 +41,12 @@ def resize_and_save_images(image_path, output_path, width, height, resample):
     if image_path.is_dir():
         # Resize all images in the directory
         for image_file in image_path.iterdir():
-            image = Image.open(image_file).convert("RGB")
-            __resize_image(image, width, height, resample).save(
-                output_path / f"{image_file.stem}_{resample}.png"
+            __resize_and_save_image_file(
+                image_file, output_path, width, height, resample
             )
     else:
         # Resize single image
-        image = Image.open(image_path).convert("RGB")
-        __resize_image(image, width, height, resample).save(
-            output_path / f"{image_path.stem}_{resample}.png"
-        )
+        __resize_and_save_image_file(image_path, output_path, width, height, resample)
 
 
 if __name__ == "__main__":
