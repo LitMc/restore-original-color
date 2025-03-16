@@ -62,14 +62,29 @@ if __name__ == "__main__":
     )
     parser.add_argument("--width", type=int, help="Target width", required=True)
     parser.add_argument("--height", type=int, help="Target height", required=True)
+    resampling_methods = [
+        "NEAREST",
+        "BILINEAR",
+        "BICUBIC",
+        "LANCZOS",
+        "HAMMING",
+        "BOX",
+        "ALL",
+    ]
     parser.add_argument(
         "--resample",
         type=str,
         help="Resampling method",
-        choices=["NEAREST", "BILINEAR", "BICUBIC", "LANCZOS", "HAMMING", "BOX"],
+        choices=resampling_methods,
         default="BICUBIC",
     )
     args = parser.parse_args()
-    resize_and_save_images(
-        args.image_path, args.output_path, args.width, args.height, args.resample
-    )
+    if args.resample == "ALL":
+        for resample in resampling_methods[:-1]:
+            resize_and_save_images(
+                args.image_path, args.output_path, args.width, args.height, resample
+            )
+    else:
+        resize_and_save_images(
+            args.image_path, args.output_path, args.width, args.height, args.resample
+        )
