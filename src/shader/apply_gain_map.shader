@@ -41,20 +41,20 @@ uniform float local_time;
 */
 
 uniform texture2d gain_map;
-uniform float gain_map_scale <
-    string uiname="Gain Map Scale";
-    float maximum=4.0;
+uniform float percentage_of_gain_applied <
+    string uiname="Percentage of gain applied";
+    float maximum=1.0;
     float minimum=0.0;
     float step=0.01;
     string widget_type="slider";
-> = 4.0;
+> = 1.0;
 
 float4 mainImage(VertData v_in) : TARGET
 {
     // For now, do a simple pass-through of the main image
     float4 baseColor = image.Sample(textureSampler, v_in.uv);
     float4 gain = gain_map.Sample(textureSampler, v_in.uv);
-    return baseColor * gain * gain_map_scale;
+    return baseColor * gain * 4.0 * percentage_of_gain_applied;
 }
 
 /*
