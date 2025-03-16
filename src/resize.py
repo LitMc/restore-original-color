@@ -4,7 +4,7 @@ from pathlib import Path
 from PIL import Image
 
 
-def resize_image(
+def __resize_image(
     image: Image,
     target_width: int,
     target_height: int,
@@ -13,6 +13,28 @@ def resize_image(
     return image.resize(
         (target_width, target_height), resample=Image.Resampling[resample]
     )
+
+
+def resize_and_save_images(image_path, output_path, width, height, resample):
+    image_path = Path(args.image_path)
+    output_path = Path(args.output_path)
+    if not image_path.exists():
+        raise FileNotFoundError(f"Image not found: {image_path}")
+    if not output_path.exists():
+        output_path.mkdir(parents=True)
+    if image_path.is_dir():
+        # Resize all images in the directory
+        for image_file in image_path.iterdir():
+            image = Image.open(image_file).convert("RGB")
+            __resize_image(image, width, height, resample).save(
+                output_path / f"{image_file.stem}_{resample}.png"
+            )
+    else:
+        # Resize single image
+        image = Image.open(image_path).convert("RGB")
+        __resize_image(image, width, height, resample).save(
+            output_path / f"{image_path.stem}_{resample}.png"
+        )
 
 
 if __name__ == "__main__":
@@ -36,22 +58,6 @@ if __name__ == "__main__":
         default="BICUBIC",
     )
     args = parser.parse_args()
-    image_path = Path(args.image_path)
-    output_path = Path(args.output_path)
-    if not image_path.exists():
-        raise FileNotFoundError(f"Image not found: {image_path}")
-    if not output_path.exists():
-        output_path.mkdir(parents=True)
-    if image_path.is_dir():
-        # Resize all images in the directory
-        for image_file in image_path.iterdir():
-            image = Image.open(image_file).convert("RGB")
-            resize_image(image, args.width, args.height, args.resample).save(
-                output_path / f"{image_file.stem}_{args.resample}.png"
-            )
-    else:
-        # Resize single image
-        image = Image.open(image_path).convert("RGB")
-        resize_image(image, args.width, args.height, args.resample).save(
-            output_path / f"{image_path.stem}_{args.resample}.png"
-        )
+    resize_and_save_images(
+        args.image_path, args.output_path, args.width, args.height, args.resample
+    )
