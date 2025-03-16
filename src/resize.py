@@ -16,8 +16,8 @@ def __resize_image(
 
 
 def resize_and_save_images(image_path, output_path, width, height, resample):
-    image_path = Path(args.image_path)
-    output_path = Path(args.output_path)
+    image_path = Path(image_path)
+    output_path = Path(output_path)
     if not image_path.exists():
         raise FileNotFoundError(f"Image not found: {image_path}")
     if not output_path.exists():
