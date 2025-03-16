@@ -4,21 +4,6 @@ from pathlib import Path
 from PIL import Image
 
 
-def resize_image_and_save(
-    image_path,
-    output_path,
-    target_width,
-    target_height,
-    resample=Image.Resampling.BICUBIC,
-) -> Image:
-    im = Image.open(image_path).convert("RGB")
-    im_resized = im.resize(
-        (target_width, target_height), resample=Image.Resampling["f{resample}"]
-    )
-    im_resized.save(output_path / f"{image_path.stem}_{resample.name}.png")
-    return im_resized
-
-
 def resize_image(
     image: Image,
     target_width: int,
